@@ -108,7 +108,6 @@ public class BarrowmanCalculatorTest {
 		assertEquals(" Estes Alpha III CNa value is incorrect:", exp_cna, calcCP.weight, EPSILON);
 	}
 	
-	
 	@Test
 	public void testCPDoubleStrapOn() {
 		Rocket rocket = TestRockets.makeFalcon9Heavy();
@@ -117,12 +116,14 @@ public class BarrowmanCalculatorTest {
 		FlightConditions conditions = new FlightConditions(config);
 		WarningSet warnings = new WarningSet();
 		
-		double expCPx = 0.994642;
-		double expCNa = 15.437111;
+		double expCPx = 1.04662388;
+		double expCNa = 21.5112;
 		Coordinate calcCP = calc.getCP(config, conditions, warnings);
 		
 		assertEquals(" Falcon 9 Heavy CP x value is incorrect:", expCPx, calcCP.x, EPSILON);
 		assertEquals(" Falcon 9 Heavy CNa value is incorrect:", expCNa, calcCP.weight, EPSILON);
+		
+		assertTrue("Induce Failure.", false);
 	}
 	
 	@Test
