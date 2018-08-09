@@ -74,7 +74,7 @@ public abstract class FinSet extends ExternalComponent implements RingInstanceab
 	/**
 	 * Number of fins.
 	 */
-	protected int fins = 3;
+	protected int fins = 1;
 	
 	/**
 	 * Rotation about the x-axis by 2*PI/fins.
@@ -587,11 +587,11 @@ public abstract class FinSet extends ExternalComponent implements RingInstanceab
 	
 
 	public BoundingBox getBoundingBox() {
-		BoundingBox singleFinBounds= new BoundingBox( getFinPoints());
+		BoundingBox singleFinBounds= new BoundingBox().update(getFinPoints());
 		final double finLength = singleFinBounds.max.x;
 		final double finHeight = singleFinBounds.max.y;
 		
-		BoundingBox compBox = new BoundingBox( getComponentLocations() );
+		BoundingBox compBox = new BoundingBox().update(getComponentLocations());
 		
 		BoundingBox finSetBox = new BoundingBox( compBox.min.sub( 0, finHeight, finHeight ), 
 												compBox.max.add( finLength, finHeight, finHeight ));
