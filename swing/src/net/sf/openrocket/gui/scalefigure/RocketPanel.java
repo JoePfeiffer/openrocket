@@ -31,6 +31,9 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.miginfocom.swing.MigLayout;
 import net.sf.openrocket.aerodynamics.AerodynamicCalculator;
 import net.sf.openrocket.aerodynamics.BarrowmanCalculator;
@@ -85,7 +88,7 @@ import net.sf.openrocket.util.StateChangeListener;
  */
 @SuppressWarnings("serial")
 public class RocketPanel extends JPanel implements TreeSelectionListener, ChangeSource {
-
+	private static final Logger log = LoggerFactory.getLogger(ConfigurationComboBox.class);
 	private static final Translator trans = Application.getTranslator();
 
 	public enum VIEW_TYPE {
@@ -702,11 +705,11 @@ public class RocketPanel extends JPanel implements TreeSelectionListener, Change
 			// if there isn't one we'll create a new simulation to update the statistics in the panel using the
 			// default simulation conditions
 			if (simulation == null) {
-				System.out.println("creating new simulation");
+				log.debug("creating new simulation");
 				simulation = ((SwingPreferences) Application.getPreferences()).getBackgroundSimulation(duplicate);
 				simulation.setFlightConfigurationId( document.getSelectedConfiguration().getId());
 			} else
-				System.out.println("using pre-existing simulation");
+				log.debug("using pre-existing simulation");
 			
 			backgroundSimulationWorker = new BackgroundSimulationWorker(document, simulation);
 			backgroundSimulationExecutor.execute(backgroundSimulationWorker);
