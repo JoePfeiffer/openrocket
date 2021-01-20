@@ -521,10 +521,9 @@ public class Rocket extends ComponentAssembly {
 		// Copy the list before iterating to prevent concurrent modification exceptions.
 		EventListener[] list = listenerList.toArray(new EventListener[0]);
 		for (EventListener l : list) {
-            { // vvvv DEVEL vvvv
-                //System.err.println("notifying listener.  (type= "+l.getClass().getSimpleName()+")");
-                //System.err.println("                     (type= "+l.getClass().getName()+")");
-            } // ^^^^ DEVEL ^^^^
+            {
+				log.debug("notifying listener.  (type= " + l.getClass().getSimpleName() + ") (type= " + l.getClass().getName() + ")");
+            }
 
             if (l instanceof ComponentChangeListener) {
 				((ComponentChangeListener) l).componentChanged(cce);
