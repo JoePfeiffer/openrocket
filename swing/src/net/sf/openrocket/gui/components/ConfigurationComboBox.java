@@ -6,18 +6,17 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.PopupMenuListener;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sf.openrocket.rocketcomponent.Rocket;
 import net.sf.openrocket.rocketcomponent.FlightConfiguration;
 import net.sf.openrocket.rocketcomponent.FlightConfigurationId;
 
 // combobox for flight configurations
-// this is insane -- it appears the only way to reconstruct a
-// JComboBox properly after adding a new entry (when added to the
-// underlying data structure being displayed, not when added directly
-// to the combobox or to its model) is to reconstruct the model.  This
-// is done quickly enough I might as well just do it every time the
-// combobox is opened, rather than trying to watch and see if it's needed.
 public class ConfigurationComboBox extends JComboBox<FlightConfiguration> {
+	private static final Logger log = LoggerFactory.getLogger(ConfigurationComboBox.class);
+
     public class ConfigurationModel implements MutableComboBoxModel<FlightConfiguration> {
 		
 		private final Rocket rkt;
