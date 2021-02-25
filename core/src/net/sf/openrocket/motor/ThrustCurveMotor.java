@@ -33,6 +33,7 @@ public class ThrustCurveMotor implements Motor, Comparable<ThrustCurveMotor>, Se
 	private String digest = "";
 	
 	private Manufacturer manufacturer = Manufacturer.getManufacturer("Unknown");
+	private String commonName = "";
 	private String designation = "";
 	private String description = "";
 	private Motor.Type type = Motor.Type.UNKNOWN;
@@ -72,6 +73,11 @@ public class ThrustCurveMotor implements Motor, Comparable<ThrustCurveMotor>, Se
 		
 		public Builder setDescription(String d) {
 			motor.description = d;
+			return this;
+		}
+		
+		public Builder setCommonName(String d) {
+			motor.commonName = d;
 			return this;
 		}
 		
@@ -202,6 +208,15 @@ public class ThrustCurveMotor implements Motor, Comparable<ThrustCurveMotor>, Se
 			motor.unitRotationalInertia = Inertia.filledCylinderRotational( motor.diameter / 2);
 			motor.unitLongitudinalInertia = Inertia.filledCylinderLongitudinal( motor.diameter / 2, motor.length);
 
+			// if a motor doesn't have both a common name and a designation, copy as needed
+			if (motor.getCommonName() == "") {
+				setCommonName(motor.getDesignation());
+				log.info("motor has no common name; copying designation " + motor.getDesignation());
+			}
+			if (motor.getDesignation() == "") {
+				setDesignation(motor.getCommonName());
+				log.info("motor has no designation; copying common name " + motor.getCommonName());
+			}
 			motor.computeStatistics();
 			
 			return motor;
@@ -439,6 +454,16 @@ public class ThrustCurveMotor implements Motor, Comparable<ThrustCurveMotor>, Se
 	@Override
 	public double getUnitIzz(){
 		return this.unitLongitudinalInertia;
+	}
+	
+	@Override
+	public String getCommonName() {
+		return commonName;
+	}
+	
+	@Override
+	public String getCommonName(double delay) {
+		return commonName + "-" + getDelayString(delay);
 	}
 	
 	@Override
@@ -758,12 +783,17 @@ public class ThrustCurveMotor implements Motor, Comparable<ThrustCurveMotor>, Se
 		if (value != 0)
 			return value;
 		
-		// 3. Diameter
+		// 3. Common Name
+		value = DESIGNATION_COMPARATOR.compare(this.getCommonName(), other.getCommonName());
+		if (value != 0)
+			return value;
+		
+		// 4. Diameter
 		value = (int) ((this.getDiameter() - other.getDiameter()) * 1000000);
 		if (value != 0)
 			return value;
 		
-		// 4. Length
+		// 5. Length
 		value = (int) ((this.getLength() - other.getLength()) * 1000000);
 		return value;
 		

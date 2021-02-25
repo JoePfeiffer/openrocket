@@ -75,6 +75,21 @@ public interface Motor {
 	
 	
 	/**
+	 * Return the common name of the motor.
+	 * 
+	 * @return the common name
+	 */
+	public String getCommonName();
+	
+	/**
+	 * Return the common name of the motor, including a delay.
+	 * 
+	 * @param delay  the delay of the motor.
+	 * @return		 common name with delay.
+	 */
+	public String getCommonName(double delay);
+	
+	/**
 	 * Return the designation of the motor.
 	 * 
 	 * @return the designation

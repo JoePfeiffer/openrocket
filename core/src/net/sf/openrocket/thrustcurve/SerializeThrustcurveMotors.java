@@ -9,6 +9,9 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.xml.sax.SAXException;
 
 import net.sf.openrocket.file.iterator.DirectoryIterator;
@@ -20,6 +23,7 @@ import net.sf.openrocket.motor.ThrustCurveMotor;
 import net.sf.openrocket.util.Pair;
 
 public class SerializeThrustcurveMotors {
+	private static final Logger log = LoggerFactory.getLogger(SerializeThrustcurveMotors.class);
 	
 	private static String[] manufacturers = {
 			"AeroTech",
@@ -80,7 +84,7 @@ public class SerializeThrustcurveMotors {
 		SearchRequest searchRequest = new SearchRequest();
 		for (String m : manufacturers) {
 			searchRequest.setManufacturer(m);
-			System.out.println("Motors for : " + m);
+			log.info("Motors for : " + m);
 			
 			SearchResponse res = ThrustCurveAPI.doSearch(searchRequest);
 			
@@ -112,7 +116,7 @@ public class SerializeThrustcurveMotors {
 					break;
 				}
 				
-				System.out.println(message);
+				log.info(message.toString());
 				
 				List<MotorBurnFile> b = getThrustCurvesForMotorId(mi.getMotor_id());
 				for (MotorBurnFile burnFile : b) {
@@ -133,31 +137,28 @@ public class SerializeThrustcurveMotors {
 						builder.setDiameter(mi.getDiameter() / 1000.0);
 						builder.setLength(mi.getLength() / 1000.0);
 						builder.setMotorType(type);
+						builder.setCommonName(mi.getCommon_name());
+						builder.setDesignation(mi.getDesignation());
 						
 						if ("OOP".equals(mi.getAvailiability())) {
-							builder.setDesignation(mi.getDesignation());
 							builder.setAvailablity(false);
-						} else if (mi.getDesignation().startsWith("Micro")) {
-							builder.setDesignation(mi.getDesignation());
-						} else {
-							builder.setDesignation(mi.getCommon_name());
 						}
 
 						allMotors.add(builder.build());
 					} catch (IllegalArgumentException e) {
-						System.out.println("\tError in simFile " + burnFile.getSimfileId() + ":  " + e.getMessage());
+						log.info("\tError in simFile " + burnFile.getSimfileId() + ":  " + e.getMessage());
 						try {
 							FileOutputStream out = new FileOutputStream(("simfile-" + burnFile.getSimfileId()).toString());
 							out.write(burnFile.getContents().getBytes());
 							out.close();
 						} catch (IOException i) {
-							System.out.println("unable to write bad file:  " + i.getMessage());
+							log.info("unable to write bad file:  " + i.getMessage());
 						}
 					}
 					
 				}
 				
-				System.out.println("\t curves: " + b.size());
+				log.info("\t curves: " + b.size());
 				
 			}
 		}
@@ -173,7 +174,7 @@ public class SerializeThrustcurveMotors {
 					b.addAll(motorData);
 				}
 			} catch (Exception ex) {
-				System.out.println("\tError downloading " + format + " for motorID=" + motorId + ": " + ex.getLocalizedMessage());
+			    log.info("\tError downloading " + format + " for motorID=" + motorId + ": " + ex.getLocalizedMessage());
 			}
 		}
 		return b;
@@ -183,7 +184,7 @@ public class SerializeThrustcurveMotors {
 		GeneralMotorLoader loader = new GeneralMotorLoader();
 		FileIterator iterator = DirectoryIterator.findDirectory(inputDir, new SimpleFileFilter("", false, loader.getSupportedExtensions()));
 		if (iterator == null) {
-			System.out.println("Can't find " + inputDir + " directory");
+			log.info("Can't find " + inputDir + " directory");
 			System.exit(1);
 		} else {
 			while (iterator.hasNext()) {
