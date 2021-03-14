@@ -77,13 +77,13 @@ class MotorInformationPanel extends JPanel {
 		super(new MigLayout("fill"));
 		
 		// Thrust curve info
-		//// Total impulse:
 		{
-			this.add(new JLabel("Designation"));
-			//this.add(new JLabel(trans.get("TCMotorSelPan.lbl.Designation")));
+			//// Designation
+			this.add(new JLabel(trans.get("TCMotorSelPan.lbl.Designation")));
 			designationLabel = new JLabel();
 			this.add(designationLabel, "wrap");
-				
+
+			//// Total impulse:
 			this.add(new JLabel(trans.get("TCMotorSelPan.lbl.Totalimpulse")));
 			totalImpulseLabel = new JLabel();
 			this.add(totalImpulseLabel, "split");
