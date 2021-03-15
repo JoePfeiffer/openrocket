@@ -31,7 +31,8 @@ enum ThrustCurveMotorColumns {
 		}
 	},
 	//// Designation
-	DESIGNATION("TCurveMotorCol.DESIGNATION") {
+	//DESIGNATION("TCurveMotorCol.DESIGNATION") {
+	NAME("TCurveMotorCol.NAME") {
 		@Override
 		public String getValue(ThrustCurveMotorSet m) {
 			return m.getCommonName();
