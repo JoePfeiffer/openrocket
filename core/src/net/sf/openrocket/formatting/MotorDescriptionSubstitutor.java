@@ -53,7 +53,7 @@ public class MotorDescriptionSubstitutor implements RocketSubstitutor {
 		
 		// Generate the description
 		
-		// First iterate over each stage and store the designations of each motor
+		// First iterate over each stage and store the common names of each motor
 		List<List<String>> list = new ArrayList<List<String>>();
 		List<String> currentList = Collections.emptyList();
 		
@@ -73,10 +73,10 @@ public class MotorDescriptionSubstitutor implements RocketSubstitutor {
 				Motor motor = inst.getMotor();
 				
 				if (mount.isMotorMount() && motor != null) {
-					String designation = motor.getDesignation(inst.getEjectionDelay());
+					String commonName = motor.getCommonName(inst.getEjectionDelay());
 					
 					for (int i = 0; i < mount.getMotorCount(); i++) {
-						currentList.add(designation);
+						currentList.add(commonName);
 						motorCount++;
 					}
 				}
