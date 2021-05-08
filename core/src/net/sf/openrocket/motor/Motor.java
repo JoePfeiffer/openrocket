@@ -131,6 +131,20 @@ public interface Motor {
 	 * @return the length
 	 */
 	public double getLength();
+
+	/**
+	 * Return the motor's "code", as used in RockSim and RASP
+	 *
+	 * @return the motor code
+	 */
+	public String getMotorCode();
+
+	/**
+	 * Return the motor's code with a delay
+	 *
+	 * @return the motor code and delay
+	 */
+	public String getMotorCode(double d);
 	
 	public String getDigest();
 	

@@ -35,6 +35,7 @@ public class ThrustCurveMotor implements Motor, Comparable<ThrustCurveMotor>, Se
 	private Manufacturer manufacturer = Manufacturer.getManufacturer("Unknown");
 	private String commonName = "";
 	private String designation = "";
+	private String motorCode = "";
 	private String description = "";
 	private Motor.Type type = Motor.Type.UNKNOWN;
 	private double[] delays = {};
@@ -70,14 +71,14 @@ public class ThrustCurveMotor implements Motor, Comparable<ThrustCurveMotor>, Se
 			motor.cg = cg;
 			return this;
 		}
-		
-		public Builder setDescription(String d) {
-			motor.description = d;
+
+		public Builder setCommonName(String s) {
+			motor.commonName = s;
 			return this;
 		}
 		
-		public Builder setCommonName(String d) {
-			motor.commonName = d;
+		public Builder setDescription(String d) {
+			motor.description = d;
 			return this;
 		}
 		
@@ -108,6 +109,11 @@ public class ThrustCurveMotor implements Motor, Comparable<ThrustCurveMotor>, Se
 		
 		public Builder setManufacturer(Manufacturer m) {
 			motor.manufacturer = m;
+			return this;
+		}
+		
+		public Builder setMotorCode(String c) {
+			motor.motorCode = c;
 			return this;
 		}
 		
@@ -208,15 +214,13 @@ public class ThrustCurveMotor implements Motor, Comparable<ThrustCurveMotor>, Se
 			motor.unitRotationalInertia = Inertia.filledCylinderRotational( motor.diameter / 2);
 			motor.unitLongitudinalInertia = Inertia.filledCylinderLongitudinal( motor.diameter / 2, motor.length);
 
-			// if a motor doesn't have both a common name and a designation, copy as needed
-			if (motor.getCommonName() == "") {
-				setCommonName(motor.getDesignation());
-				log.info("motor has no common name; copying designation " + motor.getDesignation());
-			}
-			if (motor.getDesignation() == "") {
-				setDesignation(motor.getCommonName());
-				log.info("motor has no designation; copying common name " + motor.getCommonName());
-			}
+			// motors that are loaded from files will only have a motor code, and not a common name nor designation.
+			// So we'll copy as needed
+			if (motor.designation == "")
+				motor.designation = motor.getMotorCode();
+			if (motor.commonName == "")
+				motor.commonName = motor.getMotorCode();
+			
 			motor.computeStatistics();
 			
 			return motor;
@@ -475,7 +479,16 @@ public class ThrustCurveMotor implements Motor, Comparable<ThrustCurveMotor>, Se
 	public String getDesignation(double delay) {
 		return designation + "-" + getDelayString(delay);
 	}
-	
+
+	@Override
+	public String getMotorCode() {
+		return motorCode;
+	}
+
+	@Override
+	public String getMotorCode(double delay) {
+		return motorCode + "-" + getDelayString(delay);
+	}
 	
 	@Override
 	public String getDescription() {

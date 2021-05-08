@@ -129,7 +129,7 @@ public class RockSimMotorLoader extends AbstractMotorLoader {
 	private static class RSEMotorHandler extends AbstractElementHandler {
 		
 		private final String manufacturer;
-		private final String designation;
+		private final String motorCode;
 		private final double[] delays;
 		private final double diameter;
 		private final double length;
@@ -158,11 +158,11 @@ public class RockSimMotorLoader extends AbstractMotorLoader {
 				throw new SAXException("Manufacturer missing");
 			manufacturer = str;
 			
-			// Designation
+			// Motor Code
 			str = attributes.get("code");
 			if (str == null)
-				throw new SAXException("Designation missing");
-			designation = removeDelay(str);
+				throw new SAXException("Motor Code missing");
+			motorCode = removeDelay(str);
 			
 			// Delays
 			ArrayList<Double> delayList = new ArrayList<Double>();
@@ -377,13 +377,13 @@ public class RockSimMotorLoader extends AbstractMotorLoader {
 						log.warn("Loaded motor type inconsistent with manufacturer," +
 								" loaded type=" + t + " manufacturer=" + m +
 								" manufacturer type=" + m.getMotorType() +
-								" designation=" + designation);
+								" motor code=" + motorCode);
 					}
 				}
 				
 				return new ThrustCurveMotor.Builder()
 						.setManufacturer(m)
-						.setDesignation(designation)
+						.setMotorCode(motorCode)
 						.setDescription(description)
 						.setMotorType(t)
 						.setStandardDelays(delays)
