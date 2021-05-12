@@ -109,8 +109,8 @@ public class SearchRequest {
 		if (type != null) {
 			w.append("  <type>").append(type).append("</type>\n");
 		}
-		w.append("<data-fields>*</data-fields>");
-        w.append("<max-results>0</max-results>");
+		//		w.append("<data-fields>*</data-fields>");
+		w.append("<max-results>0</max-results>");
 		w.append("</search-request>\n");
 		return w.toString();
 	}

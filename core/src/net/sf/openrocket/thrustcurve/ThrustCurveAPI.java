@@ -32,9 +32,9 @@ public abstract class ThrustCurveAPI {
 		conn.setUseCaches(false);
 		
 		stream = conn.getOutputStream();
-		
+		System.out.println("request string " + requestString);
 		stream.write(requestString.getBytes());
-		
+
 		InputStream is = conn.getInputStream();
 		
 		SearchResponse result = SearchResponseParser.parse(is);

@@ -73,6 +73,7 @@ public class ThrustCurveMotor implements Motor, Comparable<ThrustCurveMotor>, Se
 		}
 
 		public Builder setCommonName(String s) {
+			System.out.println("setCommonName(" + s + ")");
 			motor.commonName = s;
 			return this;
 		}
@@ -83,6 +84,7 @@ public class ThrustCurveMotor implements Motor, Comparable<ThrustCurveMotor>, Se
 		}
 		
 		public Builder setDesignation(String d) {
+			System.out.println("setDesignation(" + d + ")");
 			motor.designation = d;
 			return this;
 		}
@@ -113,6 +115,7 @@ public class ThrustCurveMotor implements Motor, Comparable<ThrustCurveMotor>, Se
 		}
 		
 		public Builder setMotorCode(String c) {
+			System.out.println("setMotorCode(" + c + ")");
 			motor.motorCode = c;
 			return this;
 		}
@@ -214,12 +217,16 @@ public class ThrustCurveMotor implements Motor, Comparable<ThrustCurveMotor>, Se
 			motor.unitRotationalInertia = Inertia.filledCylinderRotational( motor.diameter / 2);
 			motor.unitLongitudinalInertia = Inertia.filledCylinderLongitudinal( motor.diameter / 2, motor.length);
 
-			// motors that are loaded from files will only have a motor code, and not a common name nor designation.
-			// So we'll copy as needed
-			if (motor.designation == "")
-				motor.designation = motor.getMotorCode();
-			if (motor.commonName == "")
-				motor.commonName = motor.getMotorCode();
+			// If we have a motor code but not a designation or common name, we'll construct them
+			if (motor.commonName == "") {
+				System.out.println("constructing common name from motor code " + motor.motorCode);
+				motor.commonName = motor.motorCode;
+			}
+			if (motor.designation == "") {
+				System.out.println("constructing designation from motor code " + motor.motorCode);
+				motor.designation = motor.motorCode;
+			}
+			
 			
 			motor.computeStatistics();
 			
@@ -478,16 +485,6 @@ public class ThrustCurveMotor implements Motor, Comparable<ThrustCurveMotor>, Se
 	@Override
 	public String getDesignation(double delay) {
 		return designation + "-" + getDelayString(delay);
-	}
-
-	@Override
-	public String getMotorCode() {
-		return motorCode;
-	}
-
-	@Override
-	public String getMotorCode(double delay) {
-		return motorCode + "-" + getDelayString(delay);
 	}
 	
 	@Override
