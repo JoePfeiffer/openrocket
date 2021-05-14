@@ -127,20 +127,18 @@ public class SerializeThrustcurveMotors {
 						if (mi.getProp_mass_g() != null) {
 							// builder.setPropellantMass(mi.getProp_mass_g() / 1000.0);
 						}
-						
+
+						builder.setCommonName(mi.getCommon_name());
+						builder.setDesignation(mi.getDesignation());
 						builder.setCaseInfo(mi.getCase_info());
 						builder.setPropellantInfo(mi.getProp_info());
 						builder.setDiameter(mi.getDiameter() / 1000.0);
 						builder.setLength(mi.getLength() / 1000.0);
 						builder.setMotorType(type);
-						
+
+						builder.setDesignation(mi.getDesignation());
 						if ("OOP".equals(mi.getAvailiability())) {
-							builder.setDesignation(mi.getDesignation());
 							builder.setAvailablity(false);
-						} else if (mi.getDesignation().startsWith("Micro")) {
-							builder.setDesignation(mi.getDesignation());
-						} else {
-							builder.setDesignation(mi.getCommon_name());
 						}
 
 						allMotors.add(builder.build());

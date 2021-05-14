@@ -75,6 +75,21 @@ public interface Motor {
 	
 	
 	/**
+	 * Return the commonName of the motor.
+	 * 
+	 * @return the commonName
+	 */
+	public String getCommonName();
+	
+	/**
+	 * Return the commonName of the motor, including a delay.
+	 * 
+	 * @param delay  the delay of the motor.
+	 * @return		 commonName with delay.
+	 */
+	public String getCommonName(double delay);
+	
+	/**
 	 * Return the designation of the motor.
 	 * 
 	 * @return the designation
@@ -89,7 +104,22 @@ public interface Motor {
 	 */
 	public String getDesignation(double delay);
 	
+
+	/**
+	 * Return the motorCode of the motor.
+	 * 
+	 * @return the motorCode
+	 */
+	public String getMotorCode();
 	
+	/**
+	 * Return the motorCode of the motor, including a delay.
+	 * 
+	 * @param delay  the delay of the motor.
+	 * @return		 motorCode with delay.
+	 */
+	public String getMotorCode(double delay);
+		
 	/**
 	 * Return extra description for the motor.  This may include for example 
 	 * comments on the source of the thrust curve.  The returned <code>String</code>
