@@ -47,7 +47,7 @@ public class RASPMotorLoader extends AbstractMotorLoader {
 		BufferedReader in = new BufferedReader(reader);
 		
 		String manufacturer = "";
-		String designation = "";
+		String motorCode = "";
 		String comment = "";
 		
 		double length = 0;
@@ -68,7 +68,7 @@ public class RASPMotorLoader extends AbstractMotorLoader {
 			main: while (line != null) { // Until EOF
 			
 				manufacturer = "";
-				designation = "";
+				motorCode = "";
 				comment = "";
 				length = 0;
 				diameter = 0;
@@ -97,7 +97,7 @@ public class RASPMotorLoader extends AbstractMotorLoader {
 					throw new IOException("Illegal file format.");
 				}
 				
-				designation = pieces[0];
+				motorCode = pieces[0];
 				diameter = Double.parseDouble(pieces[1]) / 1000.0;
 				length = Double.parseDouble(pieces[2]) / 1000.0;
 				
@@ -152,7 +152,7 @@ public class RASPMotorLoader extends AbstractMotorLoader {
 				for (int i = 0; i < delays.size(); i++) {
 					delayArray[i] = delays.get(i);
 				}
-				motors.add(createRASPMotor(manufacturer, designation, comment,
+				motors.add(createRASPMotor(manufacturer, motorCode, comment,
 						length, diameter, delayArray, propW, totalW, time, thrust));
 			}
 			
@@ -170,7 +170,7 @@ public class RASPMotorLoader extends AbstractMotorLoader {
 	 * Create a motor from RASP file data.
 	 * @throws IOException  if the data is illegal for a thrust curve
 	 */
-	private static ThrustCurveMotor.Builder createRASPMotor(String manufacturer, String designation,
+	private static ThrustCurveMotor.Builder createRASPMotor(String manufacturer, String motorCode,
 			String comment, double length, double diameter, double[] delays,
 			double propW, double totalW, List<Double> time, List<Double> thrust)
 			throws IOException {
@@ -189,7 +189,7 @@ public class RASPMotorLoader extends AbstractMotorLoader {
 			cgArray[i] = new Coordinate(length / 2, 0, 0, mass.get(i));
 		}
 		
-		designation = removeDelay(designation);
+		motorCode = removeDelay(motorCode);
 		
 		// Create the motor digest from data available in RASP files
 		MotorDigest motorDigest = new MotorDigest();
@@ -203,7 +203,7 @@ public class RASPMotorLoader extends AbstractMotorLoader {
 			Manufacturer m = Manufacturer.getManufacturer(manufacturer);
 			ThrustCurveMotor.Builder builder = new ThrustCurveMotor.Builder();
 			builder.setManufacturer(m)
-					.setDesignation(designation)
+					.setMotorCode(motorCode)
 					.setDescription(comment)
 					.setMotorType(m.getMotorType())
 					.setStandardDelays(delays)

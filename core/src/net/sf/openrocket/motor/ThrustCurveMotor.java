@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.text.Collator;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,12 +35,14 @@ public class ThrustCurveMotor implements Motor, Comparable<ThrustCurveMotor>, Se
 	private String digest = "";
 	
 	private Manufacturer manufacturer = Manufacturer.getManufacturer("Unknown");
+	private String commonName = "";
 	private String designation = "";
 	private String description = "";
 	private Motor.Type type = Motor.Type.UNKNOWN;
 	private double[] delays = {};
 	private double diameter;
 	private double length;
+	private String motorCode = "";
 	private double[] time = {};
 	private double[] thrust = {};
 	private Coordinate[] cg = {};
@@ -62,6 +66,11 @@ public class ThrustCurveMotor implements Motor, Comparable<ThrustCurveMotor>, Se
 		
 		public Builder setCaseInfo(String v) {
 			motor.caseInfo = v;
+			return this;
+		}
+
+		public Builder setCommonName(String c) {
+			motor.commonName = c;
 			return this;
 		}
 		
@@ -102,6 +111,11 @@ public class ThrustCurveMotor implements Motor, Comparable<ThrustCurveMotor>, Se
 		
 		public Builder setManufacturer(Manufacturer m) {
 			motor.manufacturer = m;
+			return this;
+		}
+
+		public Builder setMotorCode(String c) {
+			motor.motorCode = c;
 			return this;
 		}
 		
@@ -202,7 +216,25 @@ public class ThrustCurveMotor implements Motor, Comparable<ThrustCurveMotor>, Se
 			motor.unitRotationalInertia = Inertia.filledCylinderRotational( motor.diameter / 2);
 			motor.unitLongitudinalInertia = Inertia.filledCylinderLongitudinal( motor.diameter / 2, motor.length);
 
+			// If we don't have the motor's common name or designation (ie we read the motor from a file,
+			// we didn't download it from thrustcurve.org) copy as needed.  The motor code frequently has an
+			// indication of the propellant, so we'll "simplify" the code to get rid it before using it as a
+			// common name.
+			if (motor.commonName == "") {
+				motor.commonName = simplifyMotorCode(motor.motorCode);
+			}
+
+			// we want all possible information in the designation, so we'll just use the motor code
+			// as given
+			if (motor.designation == "") {
+				motor.designation = motor.motorCode;
+			}
+			
 			motor.computeStatistics();
+
+			System.out.println("Designation: " + motor.designation);
+			System.out.println("Common Name: " + motor.commonName);
+			System.out.println("Motor Code:  " + motor.motorCode);
 			
 			return motor;
 		}
@@ -440,6 +472,16 @@ public class ThrustCurveMotor implements Motor, Comparable<ThrustCurveMotor>, Se
 	public double getUnitIzz(){
 		return this.unitLongitudinalInertia;
 	}
+
+	@Override
+	public String getCommonName() {
+		return commonName;
+	}
+
+	@Override
+	public String getCommonName(double delay) {
+		return commonName + "-" + getDelayString(delay);
+	}
 	
 	@Override
 	public String getDesignation() {
@@ -451,6 +493,15 @@ public class ThrustCurveMotor implements Motor, Comparable<ThrustCurveMotor>, Se
 		return designation + "-" + getDelayString(delay);
 	}
 	
+	@Override
+	public String getMotorCode() {
+		return motorCode;
+	}
+
+	@Override
+	public String getMotorCode(double delay) {
+		return motorCode + "-" + getDelayString(delay);
+	}
 	
 	@Override
 	public String getDescription() {
@@ -471,7 +522,7 @@ public class ThrustCurveMotor implements Motor, Comparable<ThrustCurveMotor>, Se
 	public double getLaunchCGx() {
 		return cg[0].x;//cgx[0];
 	}
-	
+
 	@Override
 	public double getBurnoutCGx() {
 		return cg[cg.length - 1].x;// cgx[ cg.length - 1];
@@ -701,6 +752,7 @@ public class ThrustCurveMotor implements Motor, Comparable<ThrustCurveMotor>, Se
 	}
 	
 	
+	
 	//////////  Static methods
 	
 	/**
@@ -768,5 +820,26 @@ public class ThrustCurveMotor implements Motor, Comparable<ThrustCurveMotor>, Se
 		return value;
 		
 	}
+
+	
+	private static final Pattern SIMPLIFY_PATTERN = Pattern.compile("^[0-9]*[ -]*([A-Z][0-9]+).*");
+	
+	/**
+	 * Simplify a motor code, if possible.  This attempts to reduce the code
+	 * into a simple letter + number notation for the impulse class and average thrust.
+	 * 
+	 * @param str	the motor code to simplify
+	 * @return		the simplified designation, or the string itself if the format was not detected
+	 */
+	public static String simplifyMotorCode(String str) {
+		str = str.trim();
+		Matcher m = SIMPLIFY_PATTERN.matcher(str);
+		if (m.matches()) {
+			return m.group(1);
+		} else {
+			return str.replaceAll("\\s", "");
+		}
+	}
+	
 
 }

@@ -133,14 +133,10 @@ public class SerializeThrustcurveMotors {
 						builder.setDiameter(mi.getDiameter() / 1000.0);
 						builder.setLength(mi.getLength() / 1000.0);
 						builder.setMotorType(type);
-						
+
+						builder.setDesignation(mi.getDesignation());
 						if ("OOP".equals(mi.getAvailiability())) {
-							builder.setDesignation(mi.getDesignation());
 							builder.setAvailablity(false);
-						} else if (mi.getDesignation().startsWith("Micro")) {
-							builder.setDesignation(mi.getDesignation());
-						} else {
-							builder.setDesignation(mi.getCommon_name());
 						}
 
 						allMotors.add(builder.build());
