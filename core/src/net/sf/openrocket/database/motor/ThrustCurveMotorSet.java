@@ -39,7 +39,7 @@ public class ThrustCurveMotorSet implements Comparable<ThrustCurveMotorSet> {
 	
 	private Manufacturer manufacturer = null;
 	private String designation = null;
-	private String simplifiedDesignation = null;
+	private String commonName = null;
 	private double diameter = -1;
 	private double length = -1;
 	private long totalImpulse = 0;
@@ -53,11 +53,10 @@ public class ThrustCurveMotorSet implements Comparable<ThrustCurveMotorSet> {
 	 * @param motor	the motor to be added
 	 */
 	public void addMotor(ThrustCurveMotor motor) {
-		
 		checkFirstInsertion(motor);
 		verifyMotor(motor);
 		updateType(motor);
-		checkChangeSimplifiedDesignation(motor);
+		updateCaseInfo(motor);
 		addStandardDelays(motor);
 		if(!checkMotorOverwrite(motor)){
 			motors.add(motor);
@@ -146,15 +145,10 @@ public class ThrustCurveMotorSet implements Comparable<ThrustCurveMotorSet> {
 
 
 	/**
-	 * checks if simplified designation should be changed with the given motor
+	 * update case info if not previously known
 	 * @param motor	the motor to be checked with
 	 */
-	private void checkChangeSimplifiedDesignation(ThrustCurveMotor motor) {
-		// Change the simplified designation if necessary
-		if (!designation.equalsIgnoreCase(motor.getDesignation().trim())) {
-			designation = simplifiedDesignation;
-		}
-		
+	private void updateCaseInfo(ThrustCurveMotor motor) {
 		if (caseInfo == null) {
 			caseInfo = motor.getCaseInfo();
 		}
@@ -198,15 +192,15 @@ public class ThrustCurveMotorSet implements Comparable<ThrustCurveMotorSet> {
 
 
 	/**
-	 * checks if the given motor is the first one
-	 * the ifrst motor inserted is what will difine the rest of the motors in the set
+	 * checks if the new motor is the first one in the set.
+	 * the first motor inserted is what will difine the rest of the motors in the set
 	 * @param motor	the motor to be checked
 	 */
 	private void checkFirstInsertion(ThrustCurveMotor motor) {
 		if (motors.isEmpty()) {
 			manufacturer = motor.getManufacturer();
 			designation = motor.getDesignation();
-			simplifiedDesignation = simplifyDesignation(designation);
+			commonName = motor.getCommonName();
 			diameter = motor.getDiameter();
 			length = motor.getLength();
 			totalImpulse = Math.round((motor.getTotalImpulseEstimate()));
@@ -217,7 +211,7 @@ public class ThrustCurveMotorSet implements Comparable<ThrustCurveMotorSet> {
 	
 	/**
 	 * Checks if a motor can be added with the set
-	 * A set contains motors of same manufacturer, diameter, length and type
+	 * A set contains motors of same manufacturer, designation, diameter, length and type
 	 * @param m	the motor to be checked with
 	 * @return	if the motor passed the test or not
 	 */
@@ -239,7 +233,7 @@ public class ThrustCurveMotorSet implements Comparable<ThrustCurveMotorSet> {
 			return false;
 		}
 		
-		if (!simplifiedDesignation.equalsIgnoreCase(simplifyDesignation(m.getDesignation())))
+		if (!designation.equalsIgnoreCase(m.getDesignation()))
 			return false;
 		
 		if (caseInfo != null && !caseInfo.equalsIgnoreCase(m.getCaseInfo()))
@@ -284,6 +278,14 @@ public class ThrustCurveMotorSet implements Comparable<ThrustCurveMotorSet> {
 		return manufacturer;
 	}
 	
+	
+	/**
+	 * Return the common name of this motor type.
+	 * @return the common name
+	 */
+	public String getCommonName() {
+		return commonName;
+	}
 	
 	/**
 	 * Return the designation of this motor type.  This is either the exact or simplified
@@ -351,25 +353,6 @@ public class ThrustCurveMotorSet implements Comparable<ThrustCurveMotorSet> {
 	public String toString() {
 		return "ThrustCurveMotorSet[" + manufacturer + " " + designation +
 				", type=" + type + ", count=" + motors.size() + "]";
-	}
-	
-	private static final Pattern SIMPLIFY_PATTERN = Pattern.compile("^[0-9]*[ -]*([A-Z][0-9]+).*");
-	
-	/**
-	 * Simplify a motor designation, if possible.  This attempts to reduce the designation
-	 * into a simple letter + number notation for the impulse class and average thrust.
-	 * 
-	 * @param str	the designation to simplify
-	 * @return		the simplified designation, or the string itself if the format was not detected
-	 */
-	public static String simplifyDesignation(String str) {
-		str = str.trim();
-		Matcher m = SIMPLIFY_PATTERN.matcher(str);
-		if (m.matches()) {
-			return m.group(1);
-		} else {
-			return str.replaceAll("\\s", "");
-		}
 	}
 
 	/**
