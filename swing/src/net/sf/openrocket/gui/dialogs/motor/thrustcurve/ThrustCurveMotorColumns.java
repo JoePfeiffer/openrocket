@@ -5,7 +5,7 @@ import java.util.Comparator;
 
 import net.sf.openrocket.database.motor.ThrustCurveMotorSet;
 import net.sf.openrocket.l10n.Translator;
-import net.sf.openrocket.motor.DesignationComparator;
+import net.sf.openrocket.motor.CommonNameComparator;
 import net.sf.openrocket.motor.ThrustCurveMotor;
 import net.sf.openrocket.startup.Application;
 import net.sf.openrocket.unit.UnitGroup;
@@ -31,15 +31,15 @@ enum ThrustCurveMotorColumns {
 		}
 	},
 	//// Designation
-	DESIGNATION("TCurveMotorCol.DESIGNATION") {
+	COMMON_NAME("TCurveMotorCol.COMMON_NAME") {
 		@Override
 		public String getValue(ThrustCurveMotorSet m) {
-			return m.getDesignation();
+			return m.getCommonName();
 		}
 		
 		@Override
 		public Comparator<?> getComparator() {
-			return new DesignationComparator();
+			return new CommonNameComparator();
 		}
 	},
 	//// TotalImpulse
