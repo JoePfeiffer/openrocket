@@ -62,6 +62,14 @@ public class MotorConfiguration implements FlightConfigurableParameter<MotorConf
 		return ignitionOveride;
 	}
 
+	public String toMotorCommonName() {
+		if (motor == null) {
+			return trans.get("empty");
+		}else{
+			return this.motor.getCommonName(this.getEjectionDelay());
+		}
+	}
+
 	public String toMotorDesignation(){
 		if( motor == null ){
 			return trans.get("empty");
